@@ -1,0 +1,84 @@
+/*
+ * The global rules of the kit: the box model, the body, focus, scrollbars and the plain form
+ * controls (`.hmm-input`, `.hmm-select`, `.hmm-button`). Imported once by the app, after
+ * `tokens.css` (`occulite-ui/app.css` is both). Each component's own CSS is scoped inside it.
+ *
+ * Nothing here sets a page size or a mount element: those are the app's.
+ */
+
+html,
+body {
+    height: 100%;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    background: var(--hmm-bg);
+    color: var(--hmm-fg);
+    font-family: var(--hmm-font);
+    font-size: var(--hmm-font-size);
+}
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+/* Thin scrollbars: a data table has a lot of them, and fat default ones make a window look busy. */
+* {
+    scrollbar-width: thin;
+    scrollbar-color: var(--hmm-border-strong) transparent;
+}
+
+:focus-visible {
+    outline: 2px solid var(--hmm-focus);
+    outline-offset: -1px;
+}
+
+.hmm-mono {
+    font-family: var(--hmm-font-mono);
+}
+
+button,
+input,
+select,
+textarea {
+    font-family: inherit;
+    font-size: inherit;
+    color: inherit;
+}
+
+/* The plain form controls of toolbars and dialogs. */
+.hmm-input,
+.hmm-select {
+    height: 24px;
+    padding: 2px 6px;
+    border: 1px solid var(--hmm-border);
+    border-radius: var(--hmm-radius);
+    background: var(--hmm-input-bg);
+}
+
+.hmm-input:focus-visible,
+.hmm-select:focus-visible {
+    border-color: var(--hmm-accent);
+}
+
+.hmm-button {
+    min-height: 24px;
+    padding: 3px 10px;
+    border: 1px solid var(--hmm-border);
+    border-radius: var(--hmm-radius);
+    background: var(--hmm-control-bg);
+    cursor: pointer;
+}
+
+.hmm-button:hover:not(:disabled) {
+    background: var(--hmm-control-bg-hover);
+}
+
+.hmm-button:disabled {
+    opacity: 0.45;
+    cursor: default;
+}

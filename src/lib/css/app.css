@@ -1,0 +1,3 @@
+/* occulite-ui's global stylesheet: the tokens, then the base rules. `import 'occulite-ui/app.css'` once. */
+@import './tokens.css';
+@import './base.css';

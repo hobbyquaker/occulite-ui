@@ -1,0 +1,170 @@
+/*
+ * The design tokens - one file for both themes, light and dark.
+ *
+ * The visual language: flat surfaces, a quiet palette, one accent, hairline separators, no
+ * gradient anywhere, and controls that mark their state with colour rather than with a weight that
+ * changes their width.
+ *
+ * Light is the default and is defined on bare `:root`. Dark is defined twice - once under
+ * `prefers-color-scheme` (guarded so an explicit light choice wins) and once under
+ * `[data-theme='dark']` - so a manual switch works in both directions. The dark palette is a
+ * blue-grey rather than a neutral grey: a neutral grey on grey reads flat. Every colour of the
+ * kit's components comes from a token here; `theme.test.ts` fails the build if a component spells
+ * one out.
+ *
+ * Custom properties only; the rules are in `base.css`. The `--hmm-` prefix is kept through 0.x.
+ */
+
+:root {
+    color-scheme: light;
+
+    /* Surfaces */
+    --hmm-bg: #ffffff;
+    --hmm-bg-sunken: #f8f8f8;
+    /* Bars: the header, the toolbars, the table head, a dialog's title bar. Flat, not a gradient. */
+    --hmm-header-bg: #f3f3f3;
+    --hmm-header-solid: #ececec;
+    /* Controls: a button's face, and the field an input is typed into. */
+    --hmm-control-bg: #f0f0f0;
+    --hmm-control-bg-hover: #e4e4e4;
+    --hmm-input-bg: #ffffff;
+    --hmm-row-odd: #ffffff;
+    /* No zebra: the row separator does the work. Kept as a token so the two row states stay
+       addressable; both are the plain surface. */
+    --hmm-row-even: #ffffff;
+    --hmm-row-hover: #f0f4f8;
+    --hmm-row-selected: #cfe4f7;
+    --hmm-row-selected-text: #12314d;
+    --hmm-overlay: rgba(255, 255, 255, 0.72);
+    --hmm-backdrop: rgba(0, 0, 0, 0.35);
+    --hmm-shadow-menu: 0 4px 12px rgb(0 0 0 / 18%);
+    --hmm-shadow-toast: 0 2px 10px rgb(0 0 0 / 16%);
+
+    /* Lines */
+    --hmm-border: #cecece;
+    --hmm-border-muted: #e6e6e6;
+    --hmm-border-strong: #b0b0b0;
+
+    /* Text */
+    --hmm-fg: #3b3b3b;
+    --hmm-fg-muted: #6d6d6d;
+    --hmm-fg-faint: #9a9a9a;
+    --hmm-link: #0070c1;
+
+    /* Accents */
+    --hmm-accent: #0070c1;
+    --hmm-accent-bg: #e2eefa;
+    /* Text on a surface painted in --hmm-accent: a page's main action. */
+    --hmm-accent-fg: #ffffff;
+    --hmm-ok: #008000;
+    --hmm-warn: #a06800;
+    --hmm-error: #cd3131;
+    --hmm-focus: #0070c1;
+
+    /* Type. 13 px is the reading size of the chrome; tables stay a size below it. */
+    --hmm-font: system-ui, -apple-system, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+    --hmm-font-mono: ui-monospace, 'Cascadia Mono', Consolas, Menlo, Monaco, monospace;
+    --hmm-font-size: 13px;
+    --hmm-font-size-grid: 12px;
+    --hmm-font-size-small: 11px;
+    --hmm-font-size-tiny: 9px;
+
+    /* Metrics. The row height of every table: 30 px fits a 20 px picture and a 22 px control with
+       the cell's padding. A denser app sets it to 26 px and passes the same number to `DataTable`'s
+       `rowHeight` (the virtualiser needs it as a number, `ROW_HEIGHT` in `table/metrics.ts`). */
+    --hmm-row-height: 30px;
+    --hmm-header-height: 36px;
+    --hmm-radius: 3px;
+
+    /*
+     * Form metrics, so a dialog's spacing is a decision made once rather than a gap every row
+     * brings along. The label column is as wide as a long German switch label needs at 13 px before
+     * it wraps, and the two field widths are the ones a *type* asks for: a port is four digits,
+     * everything else fills the row it is in.
+     */
+    --hmm-form-label-width: 210px;
+    --hmm-form-column-gap: 10px;
+    --hmm-form-row-gap: 6px;
+    --hmm-form-section-gap: 14px;
+    --hmm-form-help-gap: 2px;
+    --hmm-field-narrow: 90px;
+    --hmm-field-medium: 150px;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root:not([data-theme='light']) {
+        color-scheme: dark;
+
+        --hmm-bg: #1b1f26;
+        --hmm-bg-sunken: #171a20;
+        --hmm-header-bg: #212630;
+        --hmm-header-solid: #282e39;
+        --hmm-control-bg: #2e3542;
+        --hmm-control-bg-hover: #39414f;
+        --hmm-input-bg: #353d4a;
+        --hmm-row-odd: #1b1f26;
+        --hmm-row-even: #1b1f26;
+        --hmm-row-hover: #252c38;
+        --hmm-row-selected: #264f78;
+        --hmm-row-selected-text: #e8f2fb;
+        --hmm-overlay: rgba(22, 25, 31, 0.72);
+        --hmm-backdrop: rgba(0, 0, 0, 0.6);
+        --hmm-shadow-menu: 0 4px 14px rgb(0 0 0 / 60%);
+        --hmm-shadow-toast: 0 2px 12px rgb(0 0 0 / 55%);
+
+        --hmm-border: #363e4b;
+        --hmm-border-muted: #2a313c;
+        --hmm-border-strong: #4e5769;
+
+        --hmm-fg: #ccd2dc;
+        --hmm-fg-muted: #8b94a3;
+        --hmm-fg-faint: #6b7383;
+        --hmm-link: #569cd6;
+
+        --hmm-accent: #569cd6;
+        --hmm-accent-bg: #253b52;
+        --hmm-accent-fg: #1b1f26;
+        --hmm-ok: #4ec9b0;
+        --hmm-warn: #cca700;
+        --hmm-error: #f48771;
+        --hmm-focus: #569cd6;
+    }
+}
+
+:root[data-theme='dark'] {
+    color-scheme: dark;
+
+    --hmm-bg: #1b1f26;
+    --hmm-bg-sunken: #171a20;
+    --hmm-header-bg: #212630;
+    --hmm-header-solid: #282e39;
+    --hmm-control-bg: #2e3542;
+    --hmm-control-bg-hover: #39414f;
+    --hmm-input-bg: #353d4a;
+    --hmm-row-odd: #1b1f26;
+    --hmm-row-even: #1b1f26;
+    --hmm-row-hover: #252c38;
+    --hmm-row-selected: #264f78;
+    --hmm-row-selected-text: #e8f2fb;
+    --hmm-overlay: rgba(22, 25, 31, 0.72);
+    --hmm-backdrop: rgba(0, 0, 0, 0.6);
+    --hmm-shadow-menu: 0 4px 14px rgb(0 0 0 / 60%);
+    --hmm-shadow-toast: 0 2px 12px rgb(0 0 0 / 55%);
+
+    --hmm-border: #363e4b;
+    --hmm-border-muted: #2a313c;
+    --hmm-border-strong: #4e5769;
+
+    --hmm-fg: #ccd2dc;
+    --hmm-fg-muted: #8b94a3;
+    --hmm-fg-faint: #6b7383;
+    --hmm-link: #569cd6;
+
+    --hmm-accent: #569cd6;
+    --hmm-accent-bg: #253b52;
+    --hmm-accent-fg: #1b1f26;
+    --hmm-ok: #4ec9b0;
+    --hmm-warn: #cca700;
+    --hmm-error: #f48771;
+    --hmm-focus: #569cd6;
+}
