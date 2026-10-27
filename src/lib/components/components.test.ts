@@ -690,6 +690,13 @@ describe('LanguageSwitch and ThemeSwitch', () => {
         expect(onchange).toHaveBeenCalledExactlyOnceWith('auto');
     });
 
+    it("takes a code it does not offer, an app's fallback locale, without selecting an entry", () => {
+        render(LanguageSwitch, {props: {language: 'tr'}});
+        const select = screen.getByLabelText<HTMLSelectElement>('Language');
+        expect([...select.options].map((option) => option.value)).toEqual(['auto', 'de', 'en']);
+        expect(select.selectedIndex).toBe(-1);
+    });
+
     it('stands on the browser default when nothing was chosen', () => {
         render(LanguageSwitch, {});
         expect(screen.getByLabelText<HTMLSelectElement>('Language').value).toBe('auto');

@@ -1,10 +1,14 @@
 <script lang="ts">
     import {LANGUAGE_LABELS, t as kitT, UI_LANGUAGES} from '../i18n/i18n.svelte.js';
-    import type {LanguageChoice} from '../i18n/translator.js';
+    import type {LanguageChoice, LanguageCode} from '../i18n/translator.js';
 
     interface Props {
-        /** The stored choice, not the resolved language: `auto` is one of the entries. */
-        language?: LanguageChoice;
+        /**
+         * The stored choice, not the resolved language: `auto` is one of the entries. An app may
+         * keep a code the switch does not offer (a fallback locale); the switch then shows none of
+         * its entries as selected until the user picks one.
+         */
+        language?: LanguageChoice | LanguageCode;
         label?: string | undefined;
         /** The first entry - "Browser language", or whatever the caller's catalogue calls it. */
         autoLabel?: string | undefined;
@@ -37,8 +41,9 @@
     data-testid={testId}
     value={language}
     onchange={(event) => {
-        language = event.currentTarget.value as LanguageChoice;
-        onchange?.(language);
+        const chosen = event.currentTarget.value as LanguageChoice;
+        language = chosen;
+        onchange?.(chosen);
     }}
 >
     <option value="auto">{autoLabel}</option>
