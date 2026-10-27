@@ -1,0 +1,13 @@
+node_modules/
+dist/
+coverage/
+.vite/
+.vitest/
+.svelte-kit/
+*.tsbuildinfo
+*.tgz
+test-results/
+playwright-report/
+size-report/
+.idea
+.DS_Store
