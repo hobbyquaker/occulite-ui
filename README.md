@@ -82,7 +82,7 @@ mount(App, {target: document.getElementById('app')!});
 | Import                                           | What                                                                                                  |
 | ------------------------------------------------ | ----------------------------------------------------------------------------------------------------- |
 | `occulite-ui`                                    | every component and helper below (tree-shakable)                                                      |
-| `occulite-ui/components/<Name>.svelte`           | one component                                                                                         |
+| `occulite-ui/components/<Name>`                  | one component                                                                                         |
 | `occulite-ui/app.css`                            | `tokens.css` + `base.css`, import once                                                                |
 | `occulite-ui/tokens.css`, `occulite-ui/base.css` | the custom properties alone; the global rules alone                                                   |
 | `occulite-ui/i18n`                               | `t`, `has`, `translations`, `addMessages`, `initI18n`, `setLanguage`, `i18n.language`, the translator |

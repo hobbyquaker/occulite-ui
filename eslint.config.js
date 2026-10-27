@@ -32,7 +32,7 @@ export const noBrowserDialogs = {
 
 export default tseslint.config(
     {
-        ignores: ['dist/**', 'coverage/**', '.vite/**', 'size-report/**', '**/*.tsbuildinfo'],
+        ignores: ['dist/**', '.svelte-kit/**', 'coverage/**', '.vite/**', 'size-report/**', '**/*.tsbuildinfo'],
     },
     js.configs.recommended,
     tseslint.configs.recommended,
