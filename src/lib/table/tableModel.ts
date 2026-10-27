@@ -38,6 +38,13 @@ export interface DataTableColumn<T> {
     readonly align?: 'left' | 'center' | 'right';
     /** Sortable by default. */
     readonly sortable?: boolean;
+    /**
+     * Empty cells stay last when the column is sorted descending too. By default the direction
+     * reverses the whole order, so a descending sort puts the empty cells on top - right for a
+     * name column, where the nameless devices then stand out, wrong for a value most rows have,
+     * such as a battery life: the rows without one would hide the longest.
+     */
+    readonly emptyLast?: boolean;
     /** Part of the filter by default. */
     readonly filterable?: boolean;
     /** Not drawn - the 2.x grid hid SUBTYPE for BidCos and the name columns on request. */
@@ -158,8 +165,8 @@ export function matchesFilters<T>(
  * the end, not at the top.
  */
 export function compareCells(a: CellValue, b: CellValue): number {
-    const aEmpty = a === undefined || a === '';
-    const bEmpty = b === undefined || b === '';
+    const aEmpty = isEmptyCell(a);
+    const bEmpty = isEmptyCell(b);
     if (aEmpty || bEmpty) {
         return aEmpty && bEmpty ? 0 : aEmpty ? 1 : -1;
     }
@@ -170,6 +177,11 @@ export function compareCells(a: CellValue, b: CellValue): number {
         return Number(a) - Number(b);
     }
     return String(a).localeCompare(String(b), undefined, {numeric: true, sensitivity: 'base'});
+}
+
+/** An empty cell: no value, or the empty string. */
+function isEmptyCell(value: CellValue): boolean {
+    return value === undefined || value === '';
 }
 
 export interface BuildRowsOptions<T> {
@@ -217,7 +229,16 @@ export function buildRows<T>(options: BuildRowsOptions<T>): FlatRow<T>[] {
         const column = columns.find((candidate) => candidate.key === sort.key);
         if (column && isSortable(column)) {
             const factor = sort.direction === 'asc' ? 1 : -1;
-            kept.sort((a, b) => factor * compareCells(cellValue(a, column), cellValue(b, column)));
+            const emptyLast = column.emptyLast === true;
+            kept.sort((a, b) => {
+                const aValue = cellValue(a, column);
+                const bValue = cellValue(b, column);
+                // compareCells puts an empty cell last; emptyLast keeps it there in both directions
+                if (emptyLast && (isEmptyCell(aValue) || isEmptyCell(bValue))) {
+                    return compareCells(aValue, bValue);
+                }
+                return factor * compareCells(aValue, bValue);
+            });
         }
     }
 

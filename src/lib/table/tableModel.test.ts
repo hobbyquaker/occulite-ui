@@ -19,6 +19,7 @@ import {
     tableLayout,
     visibleWindow,
     type DataTableColumn,
+    type SortDirection,
 } from './tableModel.js';
 
 interface Row {
@@ -168,6 +169,30 @@ describe('buildRows', () => {
 
         const unknown = buildRows({rows, columns, getId, expanded: new Set(), sort: {key: 'nope', direction: 'asc'}});
         expect(unknown.map((row) => row.id)).toEqual(['MEQ0000002', 'MEQ0000001', 'JEQ0000003']);
+    });
+
+    it('keeps empty cells last in both directions on an emptyLast column', () => {
+        interface Battery {
+            readonly id: string;
+            readonly days?: number | undefined;
+        }
+        const batteries: Battery[] = [{id: 'a', days: 120}, {id: 'b'}, {id: 'c', days: 400}, {id: 'd', days: 30}];
+        const byId = (row: Battery) => row.id;
+        const order = (emptyLast: boolean | undefined, direction: SortDirection) =>
+            buildRows({
+                rows: batteries,
+                columns: [{key: 'days', label: 'Days', ...(emptyLast === undefined ? {} : {emptyLast})}],
+                getId: byId,
+                expanded: new Set(),
+                sort: {key: 'days', direction},
+            }).map((row) => row.id);
+
+        expect(order(true, 'asc')).toEqual(['d', 'a', 'c', 'b']);
+        expect(order(true, 'desc')).toEqual(['c', 'a', 'd', 'b']);
+        // without the option the direction reverses everything, empty cells included
+        expect(order(undefined, 'asc')).toEqual(['d', 'a', 'c', 'b']);
+        expect(order(undefined, 'desc')).toEqual(['b', 'c', 'a', 'd']);
+        expect(order(false, 'desc')).toEqual(['b', 'c', 'a', 'd']);
     });
 
     it('does not mutate the rows it was given', () => {

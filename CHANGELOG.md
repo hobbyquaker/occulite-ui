@@ -5,6 +5,13 @@ All notable changes to this project are documented here. The format follows
 [Semantic Versioning](https://semver.org/) - in 0.x a minor version may break, and this file says
 what and how to migrate; a patch never breaks.
 
+## [Unreleased]
+
+### Added
+
+- `DataTable`: a column's `emptyLast: true` keeps its empty cells last when it is sorted
+  descending too; by default the direction reverses the whole order, empty cells included.
+
 ## [0.1.0] - 2026-10-27
 
 The first release: the generic UI of homematic-manager, extracted into a package of its own.
