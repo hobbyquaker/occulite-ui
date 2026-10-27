@@ -1,0 +1,67 @@
+name: Release
+
+# Prepared, not active: the first publish of the package is made by hand (see "Releasing" in the
+# readme), because npm's trusted publishing can only be configured for a package that exists.
+# Once it is configured, set the repository variable NPM_TRUSTED_PUBLISHING to `true`; until then
+# the jobs below are skipped even when a tag is pushed.
+
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Existing tag to release (e.g. v0.2.0)'
+        required: true
+
+permissions:
+  contents: write
+  id-token: write
+
+jobs:
+  npm:
+    if: vars.NPM_TRUSTED_PUBLISHING == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.tag || github.ref }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          registry-url: https://registry.npmjs.org
+          cache: npm
+      # trusted publishing (OIDC) needs npm >= 11.5.1
+      - run: npm install -g npm@latest
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - run: npm test
+      - name: The tag names the version in package.json
+        env:
+          TAG: ${{ inputs.tag || github.ref_name }}
+        run: test "v$(node -p 'require("./package.json").version')" = "$TAG"
+      # prereleases (0.2.0-rc.1) go to the `next` dist-tag, releases to `latest`
+      - run: |
+          TAG=latest
+          case "$(node -p 'require("./package.json").version')" in *-*) TAG=next;; esac
+          npm publish --provenance --access public --tag "$TAG"
+
+  github-release:
+    needs: npm
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.tag || github.ref }}
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - env:
+          TAG: ${{ inputs.tag || github.ref_name }}
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          node scripts/release-notes.mjs "$TAG" > "$RUNNER_TEMP/notes.md"
+          PRERELEASE=
+          case "$TAG" in *-*) PRERELEASE=--prerelease;; esac
+          gh release create "$TAG" --title "$TAG" --notes-file "$RUNNER_TEMP/notes.md" --verify-tag $PRERELEASE
